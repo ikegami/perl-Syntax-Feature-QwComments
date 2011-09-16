@@ -35,9 +35,16 @@ Version 1.1.0
 ~~~
 
 
-=head1 WARNING: USES EXPERIMENTAL FEATURES
+=head1 WARNING: Uses Experimental Features
 
 This module relies on the experimental keyword plugin and lexer interface features which "may change or be removed without notice".
+
+
+=head1 WARNING: Re-implements parts of Perl
+
+This feature is implemented by completely replacing the parser/compiler's handling of C<qw()> when the pragma is in effect.
+There may be discrepencies in how certain edge cases are handled, and new discrepencies may surface as Perl changes over time.
+Please contact me or file a bug report if you encounter any discrepencies.
 
 
 =head1 KNOWN BUGS
