@@ -15,3 +15,5 @@ pod2htmd.tmp
 pod2htmi.tmp
 *~
 *.bak
+lib/feature/qw_comments.c
+lib/feature/qw_comments.o
