@@ -1,0 +1,9 @@
+^MYMETA\.
+^Build$
+^Build.bat$
+^_build
+^blib
+^feature-qw_comments-.*
+^.git/
+~$
+.bak$
