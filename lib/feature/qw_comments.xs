@@ -4,7 +4,13 @@
 #include "XSUB.h"
 
 
-STATIC int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
+#define MY_CXT_KEY "feature::qw_comments::"
+
+typedef struct {
+   int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
+} my_cxt_t;
+
+START_MY_CXT
 
 
 STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
@@ -135,12 +141,21 @@ STATIC OP * parse_qw(pTHX) {
 
 
 STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** op_ptr) {
+   dMY_CXT;
+
    if (keyword_len == 2 && keyword_ptr[0] == 'q' && keyword_ptr[1] == 'w') {
       *op_ptr = parse_qw();
       return KEYWORD_PLUGIN_EXPR;
    }
 
-   return next_keyword_plugin(aTHX_ keyword_ptr, keyword_len, op_ptr);
+   return MY_CXT.next_keyword_plugin(aTHX_ keyword_ptr, keyword_len, op_ptr);
+}
+
+
+STATIC void my_cxt_init(pTHX_ pMY_CXT) {
+#define my_cxt_init(a) my_cxt_init(aTHX_ a)
+   MY_CXT.next_keyword_plugin = PL_keyword_plugin;
+   PL_keyword_plugin = my_keyword_plugin;
 }
 
 
@@ -149,5 +164,11 @@ STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** o
 MODULE = feature::qw_comments
 
 BOOT:
-   next_keyword_plugin = PL_keyword_plugin;
-   PL_keyword_plugin = my_keyword_plugin;
+   MY_CXT_INIT;
+   my_cxt_init(aMY_CXT);
+
+void
+CLONE(...)
+   CODE:
+      MY_CXT_CLONE;
+      my_cxt_init(aMY_CXT);
