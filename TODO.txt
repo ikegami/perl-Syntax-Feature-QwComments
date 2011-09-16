@@ -1,0 +1,12 @@
+- Make into pragma.
+
+- Add tests, including the following:
+  - Test nesting.
+  - Test "saw parens".
+  - Test error messages.
+  - Test comma warning.
+  - #line.
+
+- Add documentation.
+
+- Verified stated required Perl version.
