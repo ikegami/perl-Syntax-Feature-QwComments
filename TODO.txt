@@ -6,6 +6,7 @@
   - Test error messages.
   - Test comma warning.
   - #line.
+  - qw() vs qw(a) in void context.
 
 - Add documentation.
 
