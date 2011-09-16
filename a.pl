@@ -33,13 +33,27 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
 
 // sv is assumed to contain a string (and nothing else).
 // sv is assumed to have no magic.
+STATIC void append_char_to_word(SV* word_sv, UV c) {
+   if (SvUTF8(word_sv) || c > 255) {
+      char buf[UTF8_MAXBYTES+1];  // I wonder why the "+ 1".
+      STRLEN len;
+      len = (char*)uvuni_to_utf8((U8*)buf, c) - buf;
+      sv_utf8_upgrade_flags_grow(word_sv, 0, len+1);
+      sv_catpvn_nomg(word_sv, buf, len);
+   } else {
+      sv_catpvn_nomg(word_sv, &((char)c), 1);
+   }
+}
+
+
+// sv is assumed to contain a string (and nothing else).
+// sv is assumed to have no magic.
 // The sv's length is reduced to zero length and the UTF8 flag is turned off.
 STATIC void append_word_to_list(OP** list_op_ptr, SV* word_sv) {
    STRLEN len = SvCUR(word_sv);
    if (len) {
       SV* sv_copy = newSV(len);
       sv_copypv(sv_copy, word_sv);
-// ~~~ Check size of sv_copy's buffer.
       *list_op_ptr = op_append_elem(OP_LIST, *list_op_ptr, newSVOP(OP_CONST, 0, sv_copy));
       
       SvCUR_set(word_sv, 0);
@@ -47,20 +61,8 @@ STATIC void append_word_to_list(OP** list_op_ptr, SV* word_sv) {
    }
 }
 
-STATIC void sv_catuvchr_nomg(SV* sv, UV uv) {
-   if (SvUTF8(sv) || uv > 255) {
-      char buf[UTF8_MAXBYTES+1];  // I wonder why the "+ 1".
-      STRLEN len;
-      len = (char*)uvuni_to_utf8((U8*)buf, uv) - buf;
-      sv_utf8_upgrade_flags_grow(sv, 0, len+1);
-      sv_catpvn_nomg(sv, buf, len);
-   } else {
-      sv_catpvn_nomg(sv, &((char)uv), 1);
-   }
-}
 
-
-// XXX ~~~ croak_missing_terminator causes list_op and word to leak.
+// XXX ~~~ croak_missing_terminator causes list_op and word_sv to leak.
 STATIC OP * parse_qw(pTHX) {
    I32 sdelim;
    I32 edelim;
@@ -92,12 +94,12 @@ STATIC OP * parse_qw(pTHX) {
          lex_read_unichar(0);
          if (!--depth)
             break;
-         sv_catuvchr_nomg(word_sv, c);
+         append_char_to_word(word_sv, c);
       }
       else if (c == sdelim) {
          lex_read_unichar(0);
          ++depth;
-         sv_catuvchr_nomg(word_sv, c);
+         append_char_to_word(word_sv, c);
       }
       else if (c == '\\') {
          lex_read_unichar(0);
@@ -105,9 +107,9 @@ STATIC OP * parse_qw(pTHX) {
          if (c == -1)
              croak_missing_terminator(aTHX_ edelim);
          if (c != sdelim && c != edelim && c != '\\')
-            sv_catuvchr_nomg(word_sv, '\\');
+            append_char_to_word(word_sv, '\\');
          lex_read_unichar(0);
-         sv_catuvchr_nomg(word_sv, c);
+         append_char_to_word(word_sv, c);
       }
       else if (c == '#' || isSPACE(c)) {
          append_word_to_list(&list_op, word_sv);
@@ -115,7 +117,7 @@ STATIC OP * parse_qw(pTHX) {
       }
       else {
          lex_read_unichar(0);
-         sv_catuvchr_nomg(word_sv, c);
+         append_char_to_word(word_sv, c);
       }
    }
 
@@ -148,5 +150,4 @@ BEGIN { init(); }
 say qw! foo bar !, 'baz';
 
 # ~~~ To test: say for qw! foo bar ! x 3;
-# ~~~ Set UTF8 flag?
 # ~~~ Warn for commas
