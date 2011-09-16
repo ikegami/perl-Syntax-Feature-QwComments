@@ -1,3 +1,4 @@
+#define PERL_NO_GET_CONTEXT
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
@@ -67,8 +68,8 @@ STATIC OP * parse_qw(pTHX) {
    I32 sdelim;
    I32 edelim;
    IV depth;
-   OP * list_op = newLISTOP(OP_LIST, 0, NULL, NULL);
-   SV * word_sv = newSVpvn("", 0);
+   OP* list_op = newLISTOP(OP_LIST, 0, NULL, NULL);
+   SV* word_sv = newSVpvn("", 0);
    int warned_comma = !ckWARN(WARN_QW);
 
    lex_read_space(0);
