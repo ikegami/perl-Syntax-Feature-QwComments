@@ -7,12 +7,12 @@ STATIC int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
 
 
 STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
-   dVAR;
+#define croak_missing_terminator(a) croak_missing_terminator(aTHX_ a)
    char* s;
    char q;
 
    if (edelim == -1)
-      Perl_croak(aTHX_ "qw not terminated anywhere before EOF");
+      croak("qw not terminated anywhere before EOF");
 
    if (isCNTRL(edelim)) {
       s = ""; // ~~~ ^ plus toCTRL(PL_multi_close)
@@ -22,13 +22,14 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
    }
 
    q = strchr(s, '"') ? '\'' : '"';
-   Perl_croak(aTHX_ "Can't find qw terminator %c%s%c anywhere before EOF", q, s, q);
+   croak("Can't find qw terminator %c%s%c anywhere before EOF", q, s, q);
 }
 
 
 // sv is assumed to contain a string (and nothing else).
 // sv is assumed to have no magic.
-STATIC void append_char_to_word(SV* word_sv, UV c) {
+STATIC void append_char_to_word(pTHX_ SV* word_sv, UV c) {
+#define append_char_to_word(a,b) append_char_to_word(aTHX_ a,b)
    char buf[UTF8_MAXBYTES+1];  // I wonder why the "+ 1".
    STRLEN len;
    if (SvUTF8(word_sv) || c > 255) {
@@ -46,7 +47,8 @@ STATIC void append_char_to_word(SV* word_sv, UV c) {
 // sv is assumed to contain a string (and nothing else).
 // sv is assumed to have no magic.
 // The sv's length is reduced to zero length and the UTF8 flag is turned off.
-STATIC void append_word_to_list(OP** list_op_ptr, SV* word_sv) {
+STATIC void append_word_to_list(pTHX_ OP** list_op_ptr, SV* word_sv) {
+#define append_word_to_list(a,b) append_word_to_list(aTHX_ a,b)
    STRLEN len = SvCUR(word_sv);
    if (len) {
       SV* sv_copy = newSV(len);
@@ -61,6 +63,7 @@ STATIC void append_word_to_list(OP** list_op_ptr, SV* word_sv) {
 
 // XXX ~~~ croak_missing_terminator causes list_op and word_sv to leak.
 STATIC OP * parse_qw(pTHX) {
+#define parse_qw() parse_qw(aTHX)
    I32 sdelim;
    I32 edelim;
    IV depth;
@@ -72,7 +75,7 @@ STATIC OP * parse_qw(pTHX) {
 
    sdelim = lex_read_unichar(0);
    if (sdelim == -1)
-      croak_missing_terminator(aTHX_ -1);
+      croak_missing_terminator(-1);
 
    { // Find corresponding closing delimiter
       char* p;
@@ -86,7 +89,7 @@ STATIC OP * parse_qw(pTHX) {
    for (;;) {
       I32 c = lex_peek_unichar(0);
       if (c == -1)
-         croak_missing_terminator(aTHX_ edelim);
+         croak_missing_terminator(edelim);
       if (c == edelim) {
          append_word_to_list(&list_op, word_sv);
          lex_read_unichar(0);
@@ -103,7 +106,7 @@ STATIC OP * parse_qw(pTHX) {
          lex_read_unichar(0);
          c = lex_peek_unichar(0);
          if (c == -1)
-             croak_missing_terminator(aTHX_ edelim);
+             croak_missing_terminator(edelim);
          if (c != sdelim && c != edelim && c != '\\')
             append_char_to_word(word_sv, '\\');
          lex_read_unichar(0);
@@ -115,7 +118,7 @@ STATIC OP * parse_qw(pTHX) {
       }
       else {
          if (c == ',' && !warned_comma) {
-            Perl_warner(aTHX_ packWARN(WARN_QW), "Possible attempt to separate words with commas");
+            warner(packWARN(WARN_QW), "Possible attempt to separate words with commas");
             ++warned_comma;
          }
          lex_read_unichar(0);
@@ -132,7 +135,7 @@ STATIC OP * parse_qw(pTHX) {
 
 STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** op_ptr) {
    if (keyword_len == 2 && keyword_ptr[0] == 'q' && keyword_ptr[1] == 'w') {
-      *op_ptr = parse_qw(aTHX);
+      *op_ptr = parse_qw();
       return KEYWORD_PLUGIN_EXPR;
    }
 
