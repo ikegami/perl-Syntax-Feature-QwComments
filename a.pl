@@ -128,6 +128,7 @@ STATIC OP * parse_qw(pTHX) {
 
    SvREFCNT_dec(word_sv);
 
+   list_op->op_flags |= OPf_PARENS;
    return list_op;
 }
 
@@ -153,5 +154,4 @@ __EOI__
 BEGIN { init(); }
 
 say for qw! foo bar !, 'baz';
-
-# ~~~ To test: say for qw! foo bar ! x 3;
+say for qw! foo bar ! x 3;
