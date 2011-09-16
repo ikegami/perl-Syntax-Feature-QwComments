@@ -34,15 +34,17 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
 // sv is assumed to contain a string (and nothing else).
 // sv is assumed to have no magic.
 STATIC void append_char_to_word(SV* word_sv, UV c) {
+   char buf[UTF8_MAXBYTES+1];  // I wonder why the "+ 1".
+   STRLEN len;
    if (SvUTF8(word_sv) || c > 255) {
-      char buf[UTF8_MAXBYTES+1];  // I wonder why the "+ 1".
-      STRLEN len;
       len = (char*)uvuni_to_utf8((U8*)buf, c) - buf;
       sv_utf8_upgrade_flags_grow(word_sv, 0, len+1);
-      sv_catpvn_nomg(word_sv, buf, len);
    } else {
-      sv_catpvn_nomg(word_sv, &((char)c), 1);
+      len = 1;
+      buf[0] = c;
    }
+
+   sv_catpvn_nomg(word_sv, buf, len);
 }
 
 
