@@ -13,7 +13,7 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
    char q;
 
    if (edelim == -1)
-      croak("qw not terminated anywhere before EOF");
+      Perl_croak(aTHX_ "qw not terminated anywhere before EOF");
 
    if (isCNTRL(edelim)) {
       s = ""; // ~~~ ^ plus toCTRL(PL_multi_close)
@@ -23,7 +23,7 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
    }
 
    q = strchr(s, '"') ? '\'' : '"';
-   croak("Can't find qw terminator %c%s%c anywhere before EOF", q, s, q);
+   Perl_croak(aTHX_ "Can't find qw terminator %c%s%c anywhere before EOF", q, s, q);
 }
 
 
@@ -119,7 +119,7 @@ STATIC OP * parse_qw(pTHX) {
       }
       else {
          if (c == ',' && !warned_comma) {
-            warner(packWARN(WARN_QW), "Possible attempt to separate words with commas");
+            Perl_warner(aTHX_ packWARN(WARN_QW), "Possible attempt to separate words with commas");
             ++warned_comma;
          }
          lex_read_unichar(0);
