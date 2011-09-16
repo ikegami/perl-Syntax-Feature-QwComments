@@ -16,8 +16,6 @@ my $build = Module::Build->new(
    build_requires => {
       # For testing only
       # ----------------
-      'Encode'               => 0,
-      'IO::Handle'           => 0,
       #'Pod::Coverage'       => 0.18,      # Optional.
       'Test::More'           => 0,
       #'Test::Pod'           => 1.22,      # Optional.
@@ -27,8 +25,9 @@ my $build = Module::Build->new(
       #'Test::Pod::Coverage' => 1.08,      # Optional.
    },
    requires => {
-      'version' => 0,
-      '~~~'     => 0,
+      'perl'     => 5.014000,
+      'XSLoader' => 0,
+      'version'  => 0,
    },
    add_to_cleanup => [ 'feature-qw_comments-*' ],
    resources => {
