@@ -21,8 +21,8 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
    if (edelim == -1)
       Perl_croak(aTHX_ "qw not terminated anywhere before EOF");
 
-   if (isCNTRL(edelim)) {
-      s = ""; // ~~~ ^ plus toCTRL(PL_multi_close)
+   if (isCNTRL_A(edelim)) {
+       s = ""; // ~~~ ^ plus toCTRL(edelim)
    }
    else {
       s = ""; // ~~~
@@ -44,7 +44,7 @@ STATIC void append_char_to_word(pTHX_ SV* word_sv, UV c) {
       sv_utf8_upgrade_flags_grow(word_sv, 0, len+1);
    } else {
       len = 1;
-      buf[0] = c;
+      buf[0] = (char)c;
    }
 
    sv_catpvn_nomg(word_sv, buf, len);
@@ -164,8 +164,10 @@ STATIC void my_cxt_init(pTHX_ pMY_CXT) {
 MODULE = feature::qw_comments
 
 BOOT:
-   MY_CXT_INIT;
-   my_cxt_init(aMY_CXT);
+   {
+      MY_CXT_INIT;
+      my_cxt_init(aMY_CXT);
+   }
 
 void
 CLONE(...)
