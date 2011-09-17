@@ -7,10 +7,15 @@
 #define MY_CXT_KEY "feature::qw_comments::"
 
 typedef struct {
-   int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
+   // Empty
+   int dummy;
 } my_cxt_t;
 
 START_MY_CXT
+
+
+// PL_keyword_plugin is truly global (i.e. not per-interpreter or per-thread), so this can be truly global too.
+static int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
 
 
 STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
@@ -148,14 +153,13 @@ STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** o
       return KEYWORD_PLUGIN_EXPR;
    }
 
-   return MY_CXT.next_keyword_plugin(aTHX_ keyword_ptr, keyword_len, op_ptr);
+   return next_keyword_plugin(aTHX_ keyword_ptr, keyword_len, op_ptr);
 }
 
 
 STATIC void my_cxt_init(pTHX_ pMY_CXT) {
 #define my_cxt_init(a) my_cxt_init(aTHX_ a)
-   MY_CXT.next_keyword_plugin = PL_keyword_plugin;
-   PL_keyword_plugin = my_keyword_plugin;
+   // Empty
 }
 
 
@@ -167,6 +171,9 @@ BOOT:
    {
       MY_CXT_INIT;
       my_cxt_init(aMY_CXT);
+
+      next_keyword_plugin = PL_keyword_plugin;
+      PL_keyword_plugin = my_keyword_plugin;
    }
 
 void
