@@ -1,3 +1,1 @@
-- Verify stated required Perl version.
-
-- parse_qw leaks list_op and word_sv when it calls croak_missing_terminator.
+- Stop parse_qw from leaking list_op and word_sv when it calls croak_missing_terminator.

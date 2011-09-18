@@ -25,7 +25,7 @@ my $build = Module::Build->new(
       #'Test::Pod::Coverage' => 1.08,      # Optional.
    },
    requires => {
-      'perl'     => 5.014000,
+      'perl'     => 5.012000,
       'XSLoader' => 0,
       'version'  => 0,
    },
