@@ -1,8 +1,3 @@
-- Add tests, including the following:
-  - Test error messages.
-  - Test comma warning.
-  - Test void context warnings. qw() vs qw(a) vs qw(a b)
-
 - Add documentation.
 
 - Verified stated required Perl version.
