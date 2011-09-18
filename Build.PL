@@ -29,7 +29,7 @@ my $build = Module::Build->new(
       'XSLoader' => 0,
       'version'  => 0,
    },
-   add_to_cleanup => [ 'feature-qw_comments-*' ],
+   add_to_cleanup => [ 'feature-qw_comments-*', 'vc100.pdb' ],
    resources => {
       homepage => 'http://search.cpan.org/dist/feature-qw_comments/',
       #license => [ ],  # Populated by Software::License::*
