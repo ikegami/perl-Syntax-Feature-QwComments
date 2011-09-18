@@ -7,10 +7,10 @@
 #define MY_HINT_KEY "feature::qw_comments::"
 
 
-// PL_keyword_plugin is truly global (i.e. not per-interpreter or per-thread), so this can be truly global too.
+/* PL_keyword_plugin is truly global (i.e. not per-interpreter or per-thread), so this can be truly global too. */
 static int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
 
-// For global hint hash.
+/* For global hint hash. */
 static SV* hintkey_sv;
 
 
@@ -23,7 +23,7 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
       Perl_croak(aTHX_ "qw not terminated anywhere before EOF");
 
    if (edelim >= 0x80)
-      // Suboptimal output format
+      /* Suboptimal output format */
       Perl_croak(aTHX_ "Can't find qw terminator U+%"UVXf" anywhere before EOF", (UV)edelim);
 
    if (isCNTRL(edelim)) {
@@ -41,11 +41,11 @@ STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
 }
 
 
-// sv is assumed to contain a string (and nothing else).
-// sv is assumed to have no magic.
+/* sv is assumed to contain a string (and nothing else). */
+/* sv is assumed to have no magic. */
 STATIC void append_char_to_word(pTHX_ SV* word_sv, UV c) {
 #define append_char_to_word(a,b) append_char_to_word(aTHX_ a,b)
-   char buf[UTF8_MAXBYTES+1];  // I wonder why the "+ 1".
+   char buf[UTF8_MAXBYTES+1];  /* I wonder why the "+ 1". */
    STRLEN len;
    if (SvUTF8(word_sv) || c > 255) {
       len = (char*)uvuni_to_utf8((U8*)buf, c) - buf;
@@ -59,9 +59,9 @@ STATIC void append_char_to_word(pTHX_ SV* word_sv, UV c) {
 }
 
 
-// sv is assumed to contain a string (and nothing else).
-// sv is assumed to have no magic.
-// The sv's length is reduced to zero length and the UTF8 flag is turned off.
+/* sv is assumed to contain a string (and nothing else). */
+/* sv is assumed to have no magic. */
+/* The sv's length is reduced to zero length and the UTF8 flag is turned off. */
 STATIC void append_word_to_list(pTHX_ OP** list_op_ptr, SV* word_sv) {
 #define append_word_to_list(a,b) append_word_to_list(aTHX_ a,b)
    STRLEN len = SvCUR(word_sv);
@@ -91,7 +91,7 @@ STATIC OP * parse_qw(pTHX) {
    if (sdelim == -1)
       croak_missing_terminator(-1);
 
-   { // Find corresponding closing delimiter
+   { /* Find corresponding closing delimiter */
       char* p;
       if (sdelim && (p = strchr("([{< )]}> )]}>", sdelim)))
          edelim = *(p + 5);
@@ -195,7 +195,7 @@ STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** o
 }
 
 
-// ========================================
+/* ======================================== */
 
 MODULE = feature::qw_comments   PACKAGE = feature::qw_comments
 
