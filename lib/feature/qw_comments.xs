@@ -16,21 +16,28 @@ static SV* hintkey_sv;
 
 STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
 #define croak_missing_terminator(a) croak_missing_terminator(aTHX_ a)
-   char* s;
-   char q;
+   char buf[3];
+   char quote;
 
    if (edelim == -1)
       Perl_croak(aTHX_ "qw not terminated anywhere before EOF");
 
-   if (isCNTRL_A(edelim)) {
-       s = ""; // ~~~ ^ plus toCTRL(edelim)
-   }
-   else {
-      s = ""; // ~~~
+   if (edelim >= 0x80)
+      // Suboptimal output format
+      Perl_croak(aTHX_ "Can't find qw terminator U+%"UVXf" anywhere before EOF", (UV)edelim);
+
+   if (isCNTRL(edelim)) {
+      buf[0] = '^';
+      buf[1] = (char)toCTRL(edelim);
+      buf[2] = '\0';
+      quote = '"';
+   } else {
+      buf[0] = (char)edelim;
+      buf[1] = '\0';
+      quote = edelim == '"' ? '\'' : '"';
    }
 
-   q = strchr(s, '"') ? '\'' : '"';
-   Perl_croak(aTHX_ "Can't find qw terminator %c%s%c anywhere before EOF", q, s, q);
+   Perl_croak(aTHX_ "Can't find qw terminator %c%s%c anywhere before EOF", quote, buf, quote);
 }
 
 
