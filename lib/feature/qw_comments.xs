@@ -4,15 +4,7 @@
 #include "XSUB.h"
 
 
-#define MY_CXT_KEY  "feature::qw_comments::"
 #define MY_HINT_KEY "feature::qw_comments::"
-
-typedef struct {
-   // Empty
-   int dummy;
-} my_cxt_t;
-
-START_MY_CXT
 
 
 // PL_keyword_plugin is truly global (i.e. not per-interpreter or per-thread), so this can be truly global too.
@@ -186,8 +178,6 @@ STATIC void disable_pragma(pTHX_ SV* hintkey_sv) {
 
 
 STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** op_ptr) {
-   dMY_CXT;
-
    if (keyword_len == 2 && keyword_ptr[0] == 'q' && keyword_ptr[1] == 'w' && is_pragma_active(hintkey_sv)) {
       *op_ptr = parse_qw();
       return KEYWORD_PLUGIN_EXPR;
@@ -197,32 +187,17 @@ STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** o
 }
 
 
-STATIC void my_cxt_init(pTHX_ pMY_CXT) {
-#define my_cxt_init(a) my_cxt_init(aTHX_ a)
-   // Empty
-}
-
-
 // ========================================
 
 MODULE = feature::qw_comments   PACKAGE = feature::qw_comments
 
 BOOT:
    {
-      MY_CXT_INIT;
-      my_cxt_init(aMY_CXT);
-
       hintkey_sv = newSVpvs_share(MY_HINT_KEY);
 
       next_keyword_plugin = PL_keyword_plugin;
       PL_keyword_plugin = my_keyword_plugin;
    }
-
-void
-CLONE(...)
-   CODE:
-      MY_CXT_CLONE;
-      my_cxt_init(aMY_CXT);
 
 void
 import(...)
