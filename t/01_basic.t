@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 13;
 
 use feature::qw_comments;
 
@@ -17,6 +17,10 @@ my @a;
 
 @a = qw( a b c );
 is("@a", "a b c", "Basic");
+
+@a = qw( );     is("@a", "",    "Empty");
+@a = qw( a );   is("@a", "a",   "One element");
+@a = qw( a b ); is("@a", "a b", "Two elements");
 
 @a = qw(
    a  # Foo
