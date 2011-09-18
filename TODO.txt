@@ -1,5 +1,3 @@
-- Make into pragma.
-
 - Add tests, including the following:
   - Test nesting.
   - Test "saw parens".
