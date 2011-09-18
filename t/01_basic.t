@@ -8,10 +8,12 @@ use Test::More tests => 13;
 use feature::qw_comments;
 
 my @warnings;
-local $SIG{__WARN__} = sub {
-   push @warnings, $_[0];
-   print(STDERR $_[0]);
-};
+BEGIN {
+   $SIG{__WARN__} = sub {
+      push @warnings, $_[0];
+      print(STDERR $_[0]);
+   };
+}
 
 my @a;
 
