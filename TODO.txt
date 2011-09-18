@@ -1,3 +1,3 @@
-- Add documentation.
+- Verify stated required Perl version.
 
-- Verified stated required Perl version.
+- parse_qw leaks list_op and word_sv when it calls croak_missing_terminator.

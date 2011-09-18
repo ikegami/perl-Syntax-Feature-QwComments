@@ -76,7 +76,6 @@ STATIC void append_word_to_list(pTHX_ OP** list_op_ptr, SV* word_sv) {
 }
 
 
-// XXX ~~~ croak_missing_terminator causes list_op and word_sv to leak.
 STATIC OP * parse_qw(pTHX) {
 #define parse_qw() parse_qw(aTHX)
    I32 sdelim;

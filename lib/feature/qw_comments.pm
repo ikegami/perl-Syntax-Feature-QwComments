@@ -27,12 +27,27 @@ Version 1.1.0
 
 =head1 SYNOPSIS
 
-    ~~~
+    use feature::qw_comments;
+    
+    @a = qw(
+       foo  # Now with comments!
+       bar
+    );
 
 
 =head1 DESCRIPTION
 
-~~~
+Allows comments are inside of C<qw()>.
+
+
+=head2 C<< use feature::qw_comments; >>
+
+Allow comments inside of C<qw()> until the end of the current lexical scope.
+
+
+=head2 C<< no feature::qw_comments; >>
+
+The standard C<qw()> syntax is restored until the end of the current lexical scope.
 
 
 =head1 WARNING: Uses Experimental Features
@@ -45,11 +60,6 @@ This module relies on the experimental keyword plugin and lexer interface featur
 This feature is implemented by completely replacing the parser/compiler's handling of C<qw()> when the pragma is in effect.
 There may be discrepencies in how certain edge cases are handled, and new discrepencies may surface as Perl changes over time.
 Please contact me or file a bug report if you encounter any discrepencies.
-
-
-=head1 KNOWN BUGS
-
-~~~
 
 
 =head1 BUGS
