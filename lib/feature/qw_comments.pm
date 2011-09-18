@@ -37,7 +37,7 @@ Version 1.3.0
 
 =head1 DESCRIPTION
 
-Allows comments are inside of C<qw()>.
+Allows comments inside of C<qw()>.
 
 
 =head2 C<< use feature::qw_comments; >>
