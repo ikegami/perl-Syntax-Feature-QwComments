@@ -11,5 +11,6 @@ META.json
 README.txt
 t/00_load.t
 t/01_basic.t
+t/02_pragma.t
 t/devel-pod-coverage.t
 t/pod.t
