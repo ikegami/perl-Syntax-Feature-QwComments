@@ -4,7 +4,8 @@
 #include "XSUB.h"
 
 
-#define MY_CXT_KEY "feature::qw_comments::"
+#define MY_CXT_KEY  "feature::qw_comments::"
+#define MY_HINT_KEY "feature::qw_comments::"
 
 typedef struct {
    // Empty
@@ -16,6 +17,9 @@ START_MY_CXT
 
 // PL_keyword_plugin is truly global (i.e. not per-interpreter or per-thread), so this can be truly global too.
 static int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
+
+// For global hint hash.
+static SV* hintkey_sv;
 
 
 STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
@@ -145,10 +149,46 @@ STATIC OP * parse_qw(pTHX) {
 }
 
 
+STATIC int is_pragma_active(pTHX_ SV* hintkey_sv) {
+#define is_pragma_active(a) is_pragma_active(aTHX_ a)
+   HE* he;
+   if (!GvHV(PL_hintgv))
+      return 0;
+
+   he = hv_fetch_ent(GvHV(PL_hintgv), hintkey_sv, 0, SvSHARED_HASH(hintkey_sv));
+   return he && SvTRUE(HeVAL(he));
+}
+
+
+STATIC void enable_pragma(pTHX_ SV* hintkey_sv) {
+#define enable_pragma(a) enable_pragma(aTHX_ a)
+   SV* val_sv = newSViv(1);
+   HE* he;
+   PL_hints |= HINT_LOCALIZE_HH;
+   gv_HVadd(PL_hintgv);
+   he = hv_store_ent(GvHV(PL_hintgv), hintkey_sv, val_sv, SvSHARED_HASH(hintkey_sv));
+   if (he) {
+      SV* val = HeVAL(he);
+      SvSETMAGIC(val);
+   } else {
+      SvREFCNT_dec(val_sv);
+   }
+}
+
+
+STATIC void disable_pragma(pTHX_ SV* hintkey_sv) {
+#define disable_pragma(a) disable_pragma(aTHX_ a)
+   if (GvHV(PL_hintgv)) {
+      PL_hints |= HINT_LOCALIZE_HH;
+      hv_delete_ent(GvHV(PL_hintgv), hintkey_sv, G_DISCARD, SvSHARED_HASH(hintkey_sv));
+   }
+}
+
+
 STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** op_ptr) {
    dMY_CXT;
 
-   if (keyword_len == 2 && keyword_ptr[0] == 'q' && keyword_ptr[1] == 'w') {
+   if (keyword_len == 2 && keyword_ptr[0] == 'q' && keyword_ptr[1] == 'w' && is_pragma_active(hintkey_sv)) {
       *op_ptr = parse_qw();
       return KEYWORD_PLUGIN_EXPR;
    }
@@ -165,12 +205,14 @@ STATIC void my_cxt_init(pTHX_ pMY_CXT) {
 
 // ========================================
 
-MODULE = feature::qw_comments
+MODULE = feature::qw_comments   PACKAGE = feature::qw_comments
 
 BOOT:
    {
       MY_CXT_INIT;
       my_cxt_init(aMY_CXT);
+
+      hintkey_sv = newSVpvs_share(MY_HINT_KEY);
 
       next_keyword_plugin = PL_keyword_plugin;
       PL_keyword_plugin = my_keyword_plugin;
@@ -181,3 +223,13 @@ CLONE(...)
    CODE:
       MY_CXT_CLONE;
       my_cxt_init(aMY_CXT);
+
+void
+import(...)
+   PPCODE:
+      enable_pragma(hintkey_sv);
+
+void
+unimport(...)
+   PPCODE:
+      disable_pragma(hintkey_sv);
