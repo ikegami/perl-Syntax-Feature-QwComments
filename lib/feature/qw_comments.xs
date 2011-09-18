@@ -106,11 +106,13 @@ STATIC OP * parse_qw(pTHX) {
       if (c == -1)
          croak_missing_terminator(edelim);
       if (c == edelim) {
-         append_word_to_list(&list_op, word_sv);
          lex_read_unichar(0);
-         if (!--depth)
+         if (--depth) {
+            append_char_to_word(word_sv, c);
+         } else {
+            append_word_to_list(&list_op, word_sv);
             break;
-         append_char_to_word(word_sv, c);
+         }
       }
       else if (c == sdelim) {
          lex_read_unichar(0);
