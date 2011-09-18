@@ -1,6 +1,6 @@
 feature-qw_comments
 
-~~~desc~~~
+Pragma to allow comments in qw().
 
 
 INSTALLATION
@@ -17,11 +17,12 @@ DEPENDENCIES
 
 This module requires these other modules and libraries:
 
-    Module::Build               (For installation only)
+    Perl 5.14.0
+    Module::Build 0.36_14       (For installation only)
     Software::License::CC0_1_0  (For installation only)
     Test::More                  (For testing only)
-    ~~~
     version
+    XSLoader
 
 
 SUPPORT AND DOCUMENTATION
