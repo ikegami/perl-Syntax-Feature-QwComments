@@ -2,8 +2,6 @@
   - Test error messages.
   - Test comma warning.
   - Test void context warnings. qw() vs qw(a) vs qw(a b)
-  - Test line numbers in error messages after a newline in a qw().
-  - #line.
 
 - Add documentation.
 
