@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 20;
+use Test::More tests => 21;
 
 use feature::qw_comments;
 
@@ -67,6 +67,9 @@ is(join('|', @a), "a|a|a", "qw() still counts as parens for 'x'");
 @a = qw! a\!b !;  is(join('|', @a), "a!b",   "qw! a\\!b !");
 @a = qw( a\#b );  is(join('|', @a), "a#b",   "qw( a\\#b )");
 @a = qw( a\ b );  is(join('|', @a), "a\\|b", "qw( a\\ b )");
+
+@a = qw ( a b c );
+is(join('|', @a), "a|b|c", "Space before start delimiter");
 
 ok(!@warnings, "no warnings");
 
