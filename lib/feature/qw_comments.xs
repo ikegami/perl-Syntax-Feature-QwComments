@@ -102,6 +102,8 @@ STATIC OP * parse_qw(pTHX) {
    depth = 1;
    for (;;) {
       I32 c = lex_peek_unichar(0);
+      
+   REDO:
       if (c == -1)
          croak_missing_terminator(edelim);
       if (c == edelim) {
@@ -121,10 +123,11 @@ STATIC OP * parse_qw(pTHX) {
       else if (c == '\\') {
          lex_read_unichar(0);
          c = lex_peek_unichar(0);
-         if (c == -1)
-             croak_missing_terminator(edelim);
-         if (c != sdelim && c != edelim && c != '\\')
+         if (c != sdelim && c != edelim && c != '\\' && c != '#') {
             append_char_to_word(word_sv, '\\');
+            goto REDO;
+         }
+
          lex_read_unichar(0);
          append_char_to_word(word_sv, c);
       }

@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 13;
+use Test::More tests => 20;
 
 use feature::qw_comments;
 
@@ -18,47 +18,55 @@ BEGIN {
 my @a;
 
 @a = qw( a b c );
-is("@a", "a b c", "Basic");
+is(join('|', @a), "a|b|c", "Trivial");
 
-@a = qw( );     is("@a", "",    "Empty");
-@a = qw( a );   is("@a", "a",   "One element");
-@a = qw( a b ); is("@a", "a b", "Two elements");
+@a = qw( );     is(join('|', @a), "",    "Empty");
+@a = qw( a );   is(join('|', @a), "a",   "One element");
+@a = qw( a b ); is(join('|', @a), "a|b", "Two elements");
 
 @a = qw(
    a  # Foo
    b  # Bar
    c
 );
-is("@a", "a b c", "Comment");
+is(join('|', @a), "a|b|c", "Comment");
 
 @a = qw! a b c !;
-is("@a", "a b c", "Non-nesting");
+is(join('|', @a), "a|b|c", "Non-nesting");
 
 @a = qw( a(s) b c );
-is("@a", "a(s) b c", "Nesting ()");
+is(join('|', @a), "a(s)|b|c", "Nesting ()");
 
 @a = qw[ a[s] b c ];
-is("@a", "a[s] b c", "Nesting []");
+is(join('|', @a), "a[s]|b|c", "Nesting []");
 
 @a = qw{ a{s} b c };
-is("@a", "a{s} b c", "Nesting {}");
+is(join('|', @a), "a{s}|b|c", "Nesting {}");
 
 @a = qw!
    a  # Foo!
    b
    c
 !;
-is("@a", "a b c", "Non-nesting delimiter in comments");
+is(join('|', @a), "a|b|c", "Non-nesting delimiter in comments");
 
 @a = qw(
    a  # )
    b  # (
    c
 );
-is("@a", "a b c", "Nesting delimiter in comments");
+is(join('|', @a), "a|b|c", "Nesting delimiter in comments");
 
 @a = qw( a ) x 3;
-is("@a", "a a a", "qw() still counts as parens for 'x'");
+is(join('|', @a), "a|a|a", "qw() still counts as parens for 'x'");
+
+@a = qw( a\b );   is(join('|', @a), "a\\b",  "qw( a\\b )");
+@a = qw( a\\b );  is(join('|', @a), "a\\b",  "qw( a\\\\b )");
+@a = qw( a\(b );  is(join('|', @a), "a(b",   "qw( a\\(b )");
+@a = qw( a\)b );  is(join('|', @a), "a)b",   "qw( a\\)b )");
+@a = qw! a\!b !;  is(join('|', @a), "a!b",   "qw! a\\!b !");
+@a = qw( a\#b );  is(join('|', @a), "a#b",   "qw( a\\#b )");
+@a = qw( a\ b );  is(join('|', @a), "a\\|b", "qw( a\\ b )");
 
 ok(!@warnings, "no warnings");
 

@@ -39,6 +39,9 @@ Version 1.3.0
 
 Allows comments inside of C<qw()>.
 
+C<qw()> should work identically with and without this pragma in all other respects except one:
+In addition to escaping delimiters and itself, C<\> will escape C<#>.
+
 
 =head2 C<< use feature::qw_comments; >>
 

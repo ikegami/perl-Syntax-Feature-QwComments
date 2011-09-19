@@ -21,7 +21,7 @@ my @a;
 @a = qw(
    a # b
 );
-is("@a", "a # b", "Inactive on load");
+is(join('|', @a), "a|#|b", "Inactive on load");
 
 {
    use feature::qw_comments;
@@ -29,7 +29,7 @@ is("@a", "a # b", "Inactive on load");
    @a = qw(
       a # b
    );
-   is("@a", "a", "Active on 'use'");
+   is(join('|', @a), "a", "Active on 'use'");
    
    {
       no feature::qw_comments;
@@ -37,19 +37,19 @@ is("@a", "a # b", "Inactive on load");
       @a = qw(
          a # b
       );
-      is("@a", "a # b", "Inactive on 'no'");
+      is(join('|', @a), "a|#|b", "Inactive on 'no'");
    }
    
    @a = qw(
       a # b
    );
-   is("@a", "a", "'no' lexically scopped");
+   is(join('|', @a), "a", "'no' lexically scopped");
 }
 
 @a = qw(
    a # b
 );
-is("@a", "a # b", "'use' lexically scopped");
+is(join('|', @a), "a|#|b", "'use' lexically scopped");
 
 ok(!@warnings, "no warnings");
 
