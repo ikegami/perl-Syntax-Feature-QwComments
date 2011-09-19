@@ -98,14 +98,14 @@ my @ea;
 
 {
    no feature::qw_comments;
-   eval '@a = qw( a, b ); 1' or die $@;
+   eval '@a = qw( a, b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @ea = @a;
    @warnings = ();
 } {   
    use feature::qw_comments;
-   eval '@a = qw( a, b ); 1' or die $@;
+   eval '@a = qw( a, b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "One comma warning test verification");
    is_deeply(\@warnings, \@ewarnings, "One comma warnings");
@@ -115,14 +115,14 @@ my @ea;
 
 {
    no feature::qw_comments;
-   eval '@a = qw( a, b, ); 1' or die $@;
+   eval '@a = qw( a, b, ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @ea = @a;
    @warnings = ();
 } {   
    use feature::qw_comments;
-   eval '@a = qw( a, b, ); 1' or die $@;
+   eval '@a = qw( a, b, ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "Two commas warning test verification");
    is_deeply(\@warnings, \@ewarnings, "Two commas warnings");
@@ -132,13 +132,13 @@ my @ea;
 
 {
    no feature::qw_comments;
-   eval 'qw( ); 1' or die $@;
+   eval 'qw( ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @warnings = ();
 } {   
    use feature::qw_comments;
-   eval 'qw( ); 1' or die $@;
+   eval 'qw( ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    is_deeply(\@warnings, \@ewarnings, "Zero elements in void context");
    @warnings = ();
@@ -146,13 +146,13 @@ my @ea;
 
 {
    no feature::qw_comments;
-   eval 'qw( a ); 1' or die $@;
+   eval 'qw( a ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @warnings = ();
 } {   
    use feature::qw_comments;
-   eval 'qw( a ); 1' or die $@;
+   eval 'qw( a ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "One element in void context test verification");
    is_deeply(\@warnings, \@ewarnings, "One element in void context");
@@ -161,13 +161,13 @@ my @ea;
 
 {
    no feature::qw_comments;
-   eval 'qw( a b ); 1' or die $@;
+   eval 'qw( a b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @warnings = ();
 } {   
    use feature::qw_comments;
-   eval 'qw( a b ); 1' or die $@;
+   eval 'qw( a b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "Two elements in void context test verification");
    is_deeply(\@warnings, \@ewarnings, "Two elements in void context");

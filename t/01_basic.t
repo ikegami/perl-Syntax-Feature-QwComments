@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 21;
+use Test::More tests => 24;
 
 use feature::qw_comments;
 
@@ -43,6 +43,9 @@ is(join('|', @a), "a[s]|b|c", "Nesting []");
 @a = qw{ a{s} b c };
 is(join('|', @a), "a{s}|b|c", "Nesting {}");
 
+@a = qw< a<s> b c >;
+is(join('|', @a), "a<s>|b|c", "Nesting <>");
+
 @a = qw!
    a  # Foo!
    b
@@ -60,13 +63,19 @@ is(join('|', @a), "a|b|c", "Nesting delimiter in comments");
 @a = qw( a ) x 3;
 is(join('|', @a), "a|a|a", "qw() still counts as parens for 'x'");
 
-@a = qw( a\b );   is(join('|', @a), "a\\b",  "qw( a\\b )");
-@a = qw( a\\b );  is(join('|', @a), "a\\b",  "qw( a\\\\b )");
-@a = qw( a\(b );  is(join('|', @a), "a(b",   "qw( a\\(b )");
-@a = qw( a\)b );  is(join('|', @a), "a)b",   "qw( a\\)b )");
-@a = qw! a\!b !;  is(join('|', @a), "a!b",   "qw! a\\!b !");
-@a = qw( a\#b );  is(join('|', @a), "a#b",   "qw( a\\#b )");
-@a = qw( a\ b );  is(join('|', @a), "a\\|b", "qw( a\\ b )");
+@a = qw( a\\b );  is(join('|', @a), "a\\b",  "Escape of \"\\\"");
+@a = qw! a\!b !;  is(join('|', @a), "a!b",   "Escape of delimiter");
+@a = qw( a\(b );  is(join('|', @a), "a(b",   "Escape of start delimiter");
+@a = qw( a\)b );  is(join('|', @a), "a)b",   "Escape of end delimiter");
+@a = qw( a\#b );  is(join('|', @a), "a#b",   "Escape of \"#\"");
+@a = qw( a\b );   is(join('|', @a), "a\\b",  "Non-escape of non-meta");
+@a = qw( a\ b );  is(join('|', @a), "a\\|b", "Non-escape of space");
+
+@a = qw(a b c);
+is(join('|', @a), "a|b|c", "Lack of whitespace");
+
+@a = qw();
+is(join('|', @a), "", "Lack of whitespace with empty qw");
 
 @a = qw ( a b c );
 is(join('|', @a), "a|b|c", "Space before start delimiter");
