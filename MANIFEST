@@ -1,9 +1,9 @@
 .gitignore
 Build.PL
-CHANGES.txt
+Changes
 lib/feature/qw_comments.pm
 lib/feature/qw_comments.xs
-LICENSE.txt
+LICENSE
 MANIFEST
 MANIFEST.SKIP
 META.yml
