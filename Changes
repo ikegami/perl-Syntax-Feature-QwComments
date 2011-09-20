@@ -1,5 +1,8 @@
 Revision history for feature-qw_comments
 
+1.8.0   ????/??/??
+        - ~~~
+
 1.6.0   2011/09/19
         - Added more tests, including testing of handling of non-ASCII chars.
         - Added workaround for a bug in Perl's lex_read_unichar.
