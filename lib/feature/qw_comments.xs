@@ -4,7 +4,7 @@
 #include "XSUB.h"
 
 
-/* Apply a fix that should be found in 5.16. */
+/* Apply a fix for a bug that's fixed in 5.16. */
 #if PERL_VERSION <= 16
 #undef lex_read_unichar
 
