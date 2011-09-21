@@ -4,7 +4,7 @@ package feature::qw_comments;
 use strict;
 use warnings;
 
-use version; our $VERSION = qv('v1.8.0');
+use version; our $VERSION = qv('v1.9.0');
 
 use XSLoader qw( );
 
@@ -22,7 +22,7 @@ feature::qw_comments - Pragma to allow comments in qw()
 
 =head1 VERSION
 
-Version 1.8.0
+Version 1.9.0
 
 
 =head1 SYNOPSIS
