@@ -5,7 +5,7 @@
 
 
 /* Apply a fix for a bug that's fixed in 5.16. */
-#if PERL_VERSION < 16
+#if PERL_VERSION <= 16
 #undef lex_read_unichar
 
    static I32 lex_read_unichar(pTHX_ U32 flags) {
