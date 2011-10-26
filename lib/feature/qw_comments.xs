@@ -107,7 +107,7 @@ STATIC OP * parse_qw(pTHX) {
    I32 sdelim;
    I32 edelim;
    IV depth;
-   OP* list_op = newLISTOP(OP_LIST, 0, NULL, NULL);
+   OP* list_op = NULL;
    SV* word_sv = newSVpvn("", 0);
    int warned_comma = !ckWARN(WARN_QW);
 
@@ -172,6 +172,9 @@ STATIC OP * parse_qw(pTHX) {
    }
 
    SvREFCNT_dec(word_sv);
+
+   if (!list_op)
+      list_op = newNULLLIST();
 
    list_op->op_flags |= OPf_PARENS;
    return list_op;
