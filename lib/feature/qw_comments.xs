@@ -8,7 +8,7 @@
 #if PERL_VERSION < 16
 #undef lex_read_unichar
 
-   static I32 lex_read_unichar(pTHX_ U32 flags) {
+static I32 lex_read_unichar(pTHX_ U32 flags) {
 #define lex_read_unichar(a) lex_read_unichar(aTHX_ a)
       I32 c;
       if (flags & ~(LEX_KEEP_PREVIOUS))
