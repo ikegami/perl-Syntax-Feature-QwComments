@@ -30,18 +30,12 @@ my $build = Module::Build->new(
       'version'  => 0,
    },
    add_to_cleanup => [ 'feature-qw_comments-*', 'vc100.pdb' ],
-   resources => {
-      homepage => 'http://search.cpan.org/dist/feature-qw_comments/',
-      #license => [ ],  # Populated by Software::License::*
-      bugtracker => {
-         web     => 'http://rt.cpan.org/Public/Dist/Display.html?Name=feature-qw_comments',
-         #mailto => 'bug-feature-qw_comments@rt.cpan.org',
+   meta_merge => {
+      resources => {
+         homepage   => 'http://search.cpan.org/dist/feature-qw_comments/',
+         bugtracker => 'http://rt.cpan.org/Public/Dist/Display.html?Name=feature-qw_comments',
+         repository => "http://github.com/ikegami/perl-feature-qw_comments",  # type => "git"
       },
-      repository => {
-         type => 'git',
-         url  => 'git://github.com/ikegami/perl-feature-qw_comments.git',
-         web  => 'http://github.com/ikegami/perl-feature-qw_comments',
-      }
    },
 );
 
