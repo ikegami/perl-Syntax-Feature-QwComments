@@ -1,11 +1,9 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
 use Test::More tests => 24;
 
-use feature::qw_comments;
+use syntax qw( qw_comments );
 
 my @warnings;
 BEGIN {

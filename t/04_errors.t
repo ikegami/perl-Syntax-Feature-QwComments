@@ -1,11 +1,7 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
 use Test::More tests => 21;
-
-use feature::qw_comments;
 
 my @warnings;
 BEGIN {
@@ -13,6 +9,8 @@ BEGIN {
       push @warnings, $_[0];
    };
 }
+
+use syntax qw( qw_comments );
 
 my $error;
 my @a;
@@ -22,13 +20,13 @@ my @ewarnings;
 my @ea;
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval 'qw';
    $eerror = "".$@;
    $eerror =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
    $eerror =~ s/string(?= terminator)/qw/s;
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval 'qw';
    $error = "".$@;
    $error =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
@@ -37,13 +35,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval 'qw!';
    $eerror = "".$@;
    $eerror =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
    $eerror =~ s/string(?= terminator)/qw/s;
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval 'qw!';
    $error = "".$@;
    $error =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
@@ -52,13 +50,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval "qw'";
    $eerror = "".$@;
    $eerror =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
    $eerror =~ s/string(?= terminator)/qw/s;
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval "qw'";
    $error = "".$@;
    $error =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
@@ -67,13 +65,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval "qw\x07";
    $eerror = "".$@;
    $eerror =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
    $eerror =~ s/string(?= terminator)/qw/s;
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval "qw\x07";
    $error = "".$@;
    $error =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
@@ -82,13 +80,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval 'qw( ( )';
    $eerror = "".$@;
    $eerror =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
    $eerror =~ s/string(?= terminator)/qw/s;
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval 'qw( ( )';
    $error = "".$@;
    $error =~ s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s;
@@ -97,14 +95,14 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval '@a = qw( a, b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @ea = @a;
    @warnings = ();
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval '@a = qw( a, b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "One comma warning test verification");
@@ -114,14 +112,14 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval '@a = qw( a, b, ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @ea = @a;
    @warnings = ();
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval '@a = qw( a, b, ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "Two commas warning test verification");
@@ -131,13 +129,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval 'qw( ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @warnings = ();
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval 'qw( ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    is_deeply(\@warnings, \@ewarnings, "Zero elements in void context");
@@ -145,13 +143,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval 'qw( a ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @warnings = ();
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval 'qw( a ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "One element in void context test verification");
@@ -160,13 +158,13 @@ my @ea;
 }
 
 {
-   no feature::qw_comments;
+   no syntax qw( qw_comments );
    eval 'qw( a b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    @ewarnings = @warnings;
    @warnings = ();
 } {   
-   use feature::qw_comments;
+   use syntax qw( qw_comments );
    eval 'qw( a b ); 1' or do { my $e = $@; chomp($e); die $e; };
    s/ at (?:(?!\bat\b).)+ line \S+\.\n\z//s for @warnings;
    ok(0+@warnings, "Two elements in void context test verification");

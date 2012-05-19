@@ -2,6 +2,7 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#include "../../../callparser1.h"
 
 
 /* Apply a fix for a bug that's fixed in 5.16. */
@@ -30,14 +31,24 @@ static I32 lex_read_unichar(pTHX_ U32 flags) {
 #endif
 
 
-#define MY_HINT_KEY "feature::qw_comments::"
+STATIC OP* remove_sub_call(pTHX_ OP* entersubop) {
+#define remove_sub_call(a) remove_sub_call(aTHX_ a)
+   OP* pushop;
+   OP* realop;
 
+   pushop = cUNOPx(entersubop)->op_first;
+   if (!pushop->op_sibling)
+      pushop = cUNOPx(pushop)->op_first;
 
-/* PL_keyword_plugin is truly global (i.e. not per-interpreter or per-thread), so this can be truly global too. */
-static int (*next_keyword_plugin)(pTHX_ char*, STRLEN, OP**);
+   realop = pushop->op_sibling;
+   if (!realop || !realop->op_sibling)
+      return entersubop;
 
-/* For global hint hash. */
-static SV* hintkey_sv;
+   pushop->op_sibling = realop->op_sibling;
+   realop->op_sibling = NULL;
+   op_free(entersubop);
+   return realop;
+}
 
 
 STATIC void croak_missing_terminator(pTHX_ I32 edelim) {
@@ -102,14 +113,18 @@ STATIC void append_word_to_list(pTHX_ OP** list_op_ptr, SV* word_sv) {
 }
 
 
-STATIC OP * parse_qw(pTHX) {
-#define parse_qw() parse_qw(aTHX)
+STATIC OP* parse_qw(pTHX_ GV* namegv, SV* psobj, U32* flagsp) {
+#define parse_qw(a,b,c) parse_qw(aTHX_ a,b,c)
    I32 sdelim;
    I32 edelim;
    IV depth;
    OP* list_op = NULL;
    SV* word_sv = newSVpvn("", 0);
    int warned_comma = !ckWARN(WARN_QW);
+
+   PERL_UNUSED_ARG(namegv);
+   PERL_UNUSED_ARG(psobj);
+   PERL_UNUSED_ARG(flagsp);
 
    lex_read_space(0);
 
@@ -181,70 +196,21 @@ STATIC OP * parse_qw(pTHX) {
 }
 
 
-STATIC int is_pragma_active(pTHX_ SV* hintkey_sv) {
-#define is_pragma_active(a) is_pragma_active(aTHX_ a)
-   HE* he;
-   if (!GvHV(PL_hintgv))
-      return 0;
-
-   he = hv_fetch_ent(GvHV(PL_hintgv), hintkey_sv, 0, SvSHARED_HASH(hintkey_sv));
-   return he && SvTRUE(HeVAL(he));
-}
-
-
-STATIC void enable_pragma(pTHX_ SV* hintkey_sv) {
-#define enable_pragma(a) enable_pragma(aTHX_ a)
-   SV* val_sv = newSViv(1);
-   HE* he;
-   PL_hints |= HINT_LOCALIZE_HH;
-   gv_HVadd(PL_hintgv);
-   he = hv_store_ent(GvHV(PL_hintgv), hintkey_sv, val_sv, SvSHARED_HASH(hintkey_sv));
-   if (he) {
-      SV* val = HeVAL(he);
-      SvSETMAGIC(val);
-   } else {
-      SvREFCNT_dec(val_sv);
-   }
-}
-
-
-STATIC void disable_pragma(pTHX_ SV* hintkey_sv) {
-#define disable_pragma(a) disable_pragma(aTHX_ a)
-   if (GvHV(PL_hintgv)) {
-      PL_hints |= HINT_LOCALIZE_HH;
-      hv_delete_ent(GvHV(PL_hintgv), hintkey_sv, G_DISCARD, SvSHARED_HASH(hintkey_sv));
-   }
-}
-
-
-STATIC int my_keyword_plugin(pTHX_ char* keyword_ptr, STRLEN keyword_len, OP** op_ptr) {
-   if (keyword_len == 2 && keyword_ptr[0] == 'q' && keyword_ptr[1] == 'w' && is_pragma_active(hintkey_sv)) {
-      *op_ptr = parse_qw();
-      return KEYWORD_PLUGIN_EXPR;
-   }
-
-   return next_keyword_plugin(aTHX_ keyword_ptr, keyword_len, op_ptr);
+STATIC OP* ck_qw(pTHX_ OP* o, GV* namegv, SV* ckobj) {
+#define check_qw(a,b,c) check_qw(aTHX_ a,b,c)
+   PERL_UNUSED_ARG(namegv);
+   PERL_UNUSED_ARG(ckobj);
+   return remove_sub_call(o);
 }
 
 
 /* ======================================== */
 
-MODULE = feature::qw_comments   PACKAGE = feature::qw_comments
+MODULE = Syntax::Feature::QwComments   PACKAGE = Syntax::Feature::QwComments
 
 BOOT:
-   {
-      hintkey_sv = newSVpvs_share(MY_HINT_KEY);
-
-      next_keyword_plugin = PL_keyword_plugin;
-      PL_keyword_plugin = my_keyword_plugin;
-   }
-
-void
-import(...)
-   PPCODE:
-      enable_pragma(hintkey_sv);
-
-void
-unimport(...)
-   PPCODE:
-      disable_pragma(hintkey_sv);
+{
+   CV* const qwcv = get_cvn_flags("Syntax::Feature::QwComments::replacement_qw", 43, GV_ADD);
+   cv_set_call_parser(qwcv, parse_qw, &PL_sv_undef);
+   cv_set_call_checker(qwcv, ck_qw, &PL_sv_undef);
+}

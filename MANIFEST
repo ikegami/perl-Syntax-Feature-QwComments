@@ -1,9 +1,10 @@
 .gitignore
 Build.PL
 Changes
-lib/feature/qw_comments.pm
-lib/feature/qw_comments.xs
+lib/Syntax/Feature/QwComments.pm
+lib/Syntax/Feature/QwComments.xs
 LICENSE
+make_call_parser.PL
 MANIFEST
 MANIFEST.SKIP
 META.yml
@@ -11,8 +12,10 @@ META.json
 README.txt
 t/00_load.t
 t/01_basic.t
-t/02_pragma.t
+t/02_pragma_a.t
+t/02_pragma_b.t
 t/03_line_numbers.t
 t/04_errors.t
+t/05_unicode.t
 t/devel-pod-coverage.t
 t/pod.t

@@ -1,4 +1,4 @@
-feature-qw_comments
+Syntax-Feature-QwComments
 
 Pragma to allow comments in qw().
 
@@ -21,6 +21,9 @@ This module requires these other modules and libraries:
     Module::Build 0.36_14       (For installation only)
     Software::License::CC0_1_0  (For installation only)
     Test::More                  (For testing only)
+    Devel::CallParser
+    Lexical::Sub
+    syntax 0.004
     version
     XSLoader
 
@@ -30,21 +33,21 @@ SUPPORT AND DOCUMENTATION
 After installing, you can find documentation for this module with the
 perldoc command.
 
-    perldoc feature::qw_comments
+    perldoc Syntax::Feature::QwComments
 
 You can also look for information at:
 
     RT, CPAN's request tracker
-        http://rt.cpan.org/NoAuth/Bugs.html?Dist=feature-qw_comments
+        http://rt.cpan.org/NoAuth/Bugs.html?Dist=Syntax-Feature-QwComments
 
     AnnoCPAN, Annotated CPAN documentation
-        http://annocpan.org/dist/feature-qw_comments
+        http://annocpan.org/dist/Syntax-Feature-QwComments
 
     CPAN Ratings
-        http://cpanratings.perl.org/d/feature-qw_comments
+        http://cpanratings.perl.org/d/Syntax-Feature-QwComments
 
     Search CPAN
-        http://search.cpan.org/dist/feature-qw_comments
+        http://search.cpan.org/dist/Syntax-Feature-QwComments
 
 
 COPYRIGHT AND LICENCE

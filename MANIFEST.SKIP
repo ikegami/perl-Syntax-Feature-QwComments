@@ -3,7 +3,10 @@
 ^Build.bat$
 ^_build
 ^blib
-^feature-qw_comments-.*
+^callparser1\.h$
+^lib/Syntax/Feature/QwComments\.(?:c|o)$
+^Syntax-Feature-QwComments-.*
 ^.git/
 ~$
 .bak$
+^TODO\.txt$

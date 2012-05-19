@@ -1,11 +1,7 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
 use Test::More tests => 3;
-
-use feature::qw_comments;
 
 my @warnings;
 BEGIN {
@@ -14,6 +10,8 @@ BEGIN {
       print(STDERR $_[0]);
    };
 }
+
+use syntax qw( qw_comments );
 
 my @a;
 

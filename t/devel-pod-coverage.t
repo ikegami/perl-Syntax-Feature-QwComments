@@ -1,5 +1,3 @@
-#!/usr/bin/env perl
-
 use strict;
 use warnings;
 
@@ -21,6 +19,6 @@ BEGIN {
       or plan skip_all => "Pod::Coverage $min_pc required for testing POD coverage";
 }
 
-all_pod_coverage_ok({ also_private => [ qr/^unimport$/ ] });
+all_pod_coverage_ok();
 
 1;
