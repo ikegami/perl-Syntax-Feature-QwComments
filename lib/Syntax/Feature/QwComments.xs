@@ -216,7 +216,7 @@ MODULE = Syntax::Feature::QwComments   PACKAGE = Syntax::Feature::QwComments
 
 BOOT:
 {
-   CV* const qwcv = get_cvn_flags("Syntax::Feature::QwComments::replacement_qw", 43, GV_ADD);
+   CV* const qwcv = get_cvs("Syntax::Feature::QwComments::replacement_qw", GV_ADD);
    cv_set_call_parser(qwcv, parse_qw, &PL_sv_undef);
    cv_set_call_checker(qwcv, ck_qw, &PL_sv_undef);
 }
