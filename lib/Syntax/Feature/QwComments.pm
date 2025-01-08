@@ -3,7 +3,7 @@ package Syntax::Feature::QwComments;
 use strict;
 use warnings;
 
-use version; our $VERSION = qv('v1.15.0');
+use version; our $VERSION = qv('v1.16.0');
 
 use XSLoader qw( );
 
@@ -27,7 +27,7 @@ Syntax::Feature::QwComments - Pragma to allow comments in qw()
 
 =head1 VERSION
 
-Version 1.15.0
+Version 1.16.0
 
 
 =head1 SYNOPSIS
