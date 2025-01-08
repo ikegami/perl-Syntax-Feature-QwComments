@@ -1,5 +1,8 @@
 Revision history for Syntax-Feature-QwComments
 
+1.18.0  ~~~~-~~-~~
+        - ~~~
+
 1.16.0  2025-01-08
         - Switched to using the keyword plugin since Devel::CallParser
           and Lexical::Sub are no longer compatible.
