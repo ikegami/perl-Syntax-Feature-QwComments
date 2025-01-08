@@ -1,3 +1,5 @@
+#!perl
+
 use strict;
 use warnings;
 no warnings 'qw';
@@ -6,9 +8,9 @@ use Test::More tests => 6;
 
 my @warnings;
 BEGIN {
-   $SIG{__WARN__} = sub {
+   $SIG{ __WARN__ } = sub {
       push @warnings, $_[0];
-      print(STDERR $_[0]);
+      print( STDERR $_[0] );
    };
 }
 
@@ -19,36 +21,34 @@ my @a;
 @a = qw(
    a # b
 );
-is(join('|', @a), "a|#|b", "Inactive on load");
+is( join( '|', @a ), "a|#|b", "Inactive on load" );
 
 {
    use syntax qw( qw_comments );
-   
+
    @a = qw(
       a # b
    );
-   is(join('|', @a), "a", "Active on 'use'");
-   
+   is( join( '|', @a ), "a", "Active on 'use'" );
+
    {
       no syntax qw( qw_comments );
-   
+
       @a = qw(
          a # b
       );
-      is(join('|', @a), "a|#|b", "Inactive on 'no'");
+      is( join( '|', @a ), "a|#|b", "Inactive on 'no'" );
    }
-   
+
    @a = qw(
       a # b
    );
-   is(join('|', @a), "a", "'no' lexically scopped");
+   is( join( '|', @a ), "a", "'no' lexically scopped" );
 }
 
 @a = qw(
    a # b
 );
-is(join('|', @a), "a|#|b", "'use' lexically scopped");
+is( join( '|', @a ), "a|#|b", "'use' lexically scopped" );
 
-ok(!@warnings, "no warnings");
-
-1;
+ok( !@warnings, "no warnings" );
