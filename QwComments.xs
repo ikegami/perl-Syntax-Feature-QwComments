@@ -172,6 +172,15 @@ STATIC int my_keyword_plugin( pTHX_ char *keyword_ptr, STRLEN keyword_len, OP **
 }
 
 
+STATIC void boot( pTHX ) {
+#define boot() boot( aTHX )
+   wrap_keyword_plugin( my_keyword_plugin, &next_keyword_plugin );
+
+   hint_key_sv = newSVpvs( "Syntax::Feature::QwComments::qw" );
+   SvREADONLY_on( hint_key_sv );
+}
+
+
 /* ======================================== */
 
 MODULE = Syntax::Feature::QwComments   PACKAGE = Syntax::Feature::QwComments
@@ -186,9 +195,4 @@ hint_key()
 
 
 BOOT:
-{
-   wrap_keyword_plugin( my_keyword_plugin, &next_keyword_plugin );
-
-   hint_key_sv = newSVpvs( "Syntax::Feature::QwComments::qw" );
-   SvREADONLY_on( hint_key_sv );
-}
+   boot();
