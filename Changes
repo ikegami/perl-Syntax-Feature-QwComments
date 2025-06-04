@@ -2,6 +2,7 @@ Revision history for Syntax-Feature-QwComments
 
 1.18    ~~~~-~~-~~
         - Fixed a small markup mistake in the documentation.
+        - Fix presence of .gitignore in both MANIFEST and MANIFEST.SKIP.
         - ~~~
 
 1.16.0  2025-01-08

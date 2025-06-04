@@ -1,4 +1,3 @@
-.gitignore
 Changes
 lib/Syntax/Feature/QwComments.pm
 LICENSE.txt
